@@ -6,7 +6,7 @@ import 'package:travel_app/utils/custom_message.dart';
 class MemberController extends GetxController {
   final memberRepo = MemberRepo();
   final member = MemberModel().obs;
-  final loading = false.obs;
+  final loading = true.obs;
   final addLoading = false.obs;
   final addMoneyLoading = false.obs;
 
