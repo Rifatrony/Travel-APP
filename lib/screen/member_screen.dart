@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:travel_app/controller/cost_controller.dart';
 import 'package:travel_app/controller/member_controller.dart';
 import 'package:travel_app/model/member.dart';
 import 'package:travel_app/screen/add_member_screen.dart';
@@ -161,52 +162,36 @@ class _MemberScreenState extends State<MemberScreen> {
                             title: "Total Given",
                             value: member.givenAmount.toString(),
                           ),
-                          GetBuilder<MemberController>(builder: (controller) {
-                            final totalMembers = controller.getTotalMembers();
-                            final totalBalance =
-                                controller.calculateTotalBalance();
-                            final averageBalance = totalMembers > 0
-                                ? totalBalance / totalMembers
-                                : 0;
+                          GetBuilder<CostController>(
+                            builder: (costController) {
+                              return GetBuilder<MemberController>(
+                                builder: (memberController) {
+                                  return ReusableRow(
+                                    title: "Average Cost",
+                                    value: costController
+                                        .calculateAverageCostPerMember()
+                                        .toStringAsFixed(2),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                          GetBuilder<MemberController>(
+                            builder: (memberController) {
+                              List<Member> members =
+                                  memberController.member.value.members!;
+                              List<double> returnAmounts = memberController
+                                  .calculateReturnAmountPerMember();
+                              members = members.reversed.toList();
+                              returnAmounts = returnAmounts.reversed.toList();
+                              double returnAmount = returnAmounts[index];
 
-                            // Format the average balance to two decimal places
-                            final formattedAverageBalance =
-                                averageBalance.toStringAsFixed(2);
-
-                            // final returnAmount = givenAmount - double.parse(formattedAverageBalance);
-
-                            return ReusableRow(
-                              title: "Per person cost (not done)",
-                              value: formattedAverageBalance,
-                            );
-                          }),
-                          GetBuilder<MemberController>(builder: (controller) {
-
-                            final givenAmount = member.givenAmount;
-
-                            final totalMembers = controller.getTotalMembers();
-                            final totalBalance =
-                                controller.calculateTotalBalance();
-                            final averageBalance = totalMembers > 0
-                                ? totalBalance / totalMembers
-                                : 0;
-
-                            // Format the average balance to two decimal places
-                            final formattedAverageBalance =
-                                averageBalance.toStringAsFixed(2);
-                            final myBalance = member.givenAmount!;
-                            final returnBalance = myBalance > 0
-                                ? myBalance - averageBalance
-                                : 0;
-
-                            return ReusableRow(
-                              title: "Get Return",
-                              value: "$returnBalance",
-                              valueColor: returnBalance > 0 ? Colors.white : Colors.redAccent.shade400,
-                              valueSize: returnBalance > 0 ? 14 : 18,
-                              valueFontWidget: returnBalance > 0 ? FontWeight.normal : FontWeight.bold,
-                            );
-                          }),
+                              return ReusableRow(
+                                title: "Get Return",
+                                value: returnAmount.toString(),
+                              );
+                            },
+                          ),
                         ],
                       ),
                     ),

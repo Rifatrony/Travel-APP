@@ -13,6 +13,11 @@ class CostRepo{
     return response;
   }
 
+  Future<dynamic> deleteCost(String url) async {
+    dynamic response = await apiServices.deleteApi(url);
+    return response;
+  }
+
   
 
 }

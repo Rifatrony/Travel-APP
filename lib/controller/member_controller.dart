@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:travel_app/controller/cost_controller.dart';
 import 'package:travel_app/data/repository/member_repo.dart';
 import 'package:travel_app/model/member.dart';
 import 'package:travel_app/utils/custom_message.dart';
@@ -112,10 +113,11 @@ class MemberController extends GetxController {
         removeMember(id);
       }
       if (value['code'] == 404) {
-        Message.snackBar(value['message'], title: "Can't delete. Status code + ${value['code']}");
+        Message.snackBar(value['message'],
+            title: "Can't delete. Status code + ${value['code']}");
       }
     }).onError((error, stackTrace) {
-        Message.snackBar(error.toString(), title: "Can't delete");
+      Message.snackBar(error.toString(), title: "Can't delete");
     });
   }
 
@@ -154,5 +156,25 @@ class MemberController extends GetxController {
     return totalBalance;
   }
 
+  int calculateRemainingBalance() {
+    int totalBalance = calculateTotalBalance();
+    int totalCost = Get.find<CostController>().calculateTotalCost();
+    return totalBalance - totalCost;
+  }
+
+  List<double> calculateReturnAmountPerMember() {
+  List<Member> members = member.value.members!;
+  double averageCostPerMember = Get.find<CostController>().calculateAverageCostPerMember();
+
+  List<double> returnAmounts = [];
+
+  for (Member member in members) {
+    num givenAmount = member.givenAmount ?? 0;
+    double returnAmount = givenAmount - averageCostPerMember;
+    returnAmounts.add(returnAmount);
+  }
+
+  return returnAmounts;
+}
 
 }

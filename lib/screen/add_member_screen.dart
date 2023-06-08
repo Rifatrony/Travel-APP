@@ -80,7 +80,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
             inputType: TextInputType.phone,
           ),
 
-          isEdit? Text("Show here previous money"): Container(),
+          isEdit? const Text("Show here previous money"): Container(),
 
           AppTextForm(
             hint: "Amount",
@@ -89,16 +89,15 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
             prefixIcon: Icons.request_quote,
             inputType: TextInputType.number,
           ),
-          Obx(() {
+          GetBuilder<MemberController>(builder: (memberController){
             return AppButton(
-              loading: memberController.addLoading.value,
               onPress: () {
                 isEdit ? updateMember() : saveMember();
               },
               title: isEdit ? "Update Member" : "Add Member",
               radius: Diamentions.radius16,
             );
-          }),
+          })
         ],
       ),
     );

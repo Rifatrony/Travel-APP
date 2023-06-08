@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:travel_app/utils/diamention.dart';
 
 class AppFloatingActionButton extends StatelessWidget {
   final String title;
@@ -16,7 +15,8 @@ class AppFloatingActionButton extends StatelessWidget {
     this.height = 45,
     this.width = 140,
     this.color = Colors.redAccent,
-    this.textColor = Colors.white, this.fontSize = 14,
+    this.textColor = Colors.white,
+    this.fontSize = 14,
   });
 
   @override
@@ -36,10 +36,9 @@ class AppFloatingActionButton extends StatelessWidget {
         child: Text(
           title,
           style: TextStyle(
-            fontSize: fontSize,
-            color: textColor,
-            fontWeight: FontWeight.w400
-          ),
+              fontSize: fontSize,
+              color: textColor,
+              fontWeight: FontWeight.w400),
         ),
       ),
     );

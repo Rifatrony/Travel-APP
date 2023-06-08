@@ -94,7 +94,10 @@ class _CostScreenState extends State<CostScreen> {
                         if (value == 'edit') {
                           navigateToEditCostPage(index);
                         } else {
-                          deleteCost(
+                          final url =
+                              "${AppConstants.deleteCostUrl}/${costController.cost.value.cost![index].id}";
+                          costController.deleteMember(
+                            url,
                             costController.cost.value.cost![index].id
                                 .toString(),
                           );
@@ -117,7 +120,7 @@ class _CostScreenState extends State<CostScreen> {
                 );
               },
             );
-          } else{
+          } else {
             return const Center(child: CircularProgressIndicator());
           }
         },

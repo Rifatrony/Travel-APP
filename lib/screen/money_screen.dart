@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:travel_app/controller/member_controller.dart';
@@ -93,9 +95,9 @@ class _MoneyScreenState extends State<MoneyScreen> {
               return AppButton(
                 loading: member.addMoneyLoading.value,
                 onPress: () {
-                  isAddMoney? submitMoney() : withdrawMoney();
+                  isAddMoney ? submitMoney() : withdrawMoney();
                 },
-                title: isAddMoney? "Submit" : "Withdraw",
+                title: isAddMoney ? "Submit" : "Withdraw",
                 radius: Diamentions.radius20,
               );
             },
@@ -108,7 +110,6 @@ class _MoneyScreenState extends State<MoneyScreen> {
   void submitMoney() {
     String amount = amountController.text.trim();
     final String url = "${AppConstants.addMoneyUrl}/${widget.id}";
-    print("Url is $url");
     if (amount.isEmpty) {
       Get.snackbar("Amount Required", "Amount can't be empty");
     } else {
@@ -118,7 +119,7 @@ class _MoneyScreenState extends State<MoneyScreen> {
       memberController.addMemberMoney(data, url);
     }
   }
-  
+
   withdrawMoney() {
     String amount = amountController.text.trim();
     final String url = "${AppConstants.withdrawMoneyUrl}/${widget.id}";

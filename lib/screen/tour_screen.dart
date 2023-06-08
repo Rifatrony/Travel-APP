@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_app/controller/tour_controller.dart';
+import 'package:travel_app/screen/add_tour_screen.dart';
 import 'package:travel_app/screen/dashboard.dart';
+import 'package:travel_app/utils/app_constants.dart';
 import 'package:travel_app/utils/diamention.dart';
 import 'package:travel_app/widget/app_floating_action_button.dart';
 import 'package:travel_app/widget/big_text.dart';
@@ -23,6 +25,12 @@ class _TourScreenState extends State<TourScreen> {
   //   super.initState();
   //   // ifExistTour();
   // }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchTour();
+  }
 
   Future<void> ifExistTour() async {
     final prefs = await SharedPreferences.getInstance();
@@ -119,6 +127,19 @@ class _TourScreenState extends State<TourScreen> {
                           horizontalTitleGap: 0,
                           trailing: PopupMenuButton(
                             color: Colors.white,
+                            onSelected: (value) {
+                              if (value == 'edit') {
+                                navigateToEditTourPage(index);
+                              } else {
+                                final url =
+                                    "${AppConstants.deleteTourUrl}/${tourController.tour.value.tour![index].id}";
+                                tourController.deleteTour(
+                                  url,
+                                  tourController.tour.value.tour![index].id
+                                      .toString(),
+                                );
+                              }
+                            },
                             itemBuilder: (context) => [
                               const PopupMenuItem(
                                 value: "edit",
@@ -139,10 +160,37 @@ class _TourScreenState extends State<TourScreen> {
       ),
       floatingActionButton: AppFloatingActionButton(
         title: "Add Tour",
-        onPress: () {},
+        onPress: () {
+          navigateToAddTourPage();
+        },
         color: Colors.redAccent.shade400,
         fontSize: 14,
       ),
     );
+  }
+
+  void fetchTour() {
+    tourController.getMyALlTour();
+  }
+
+  Future<void> navigateToAddTourPage() async {
+    final route = MaterialPageRoute(
+      builder: (context) => const AddTourScreen(),
+    );
+    await Navigator.push(context, route);
+    fetchTour();
+  }
+
+  Future<void> navigateToEditTourPage(int index) async {
+     final route = MaterialPageRoute(
+      builder: (context) => AddTourScreen(
+        id: tourController.tour.value.tour![index].id,
+        name: tourController.tour.value.tour![index].name,
+        startDate: tourController.tour.value.tour![index].startDate,
+        endDate: tourController.tour.value.tour![index].endDate,
+      ),
+    );
+    await Navigator.push(context, route);
+    fetchTour();
   }
 }

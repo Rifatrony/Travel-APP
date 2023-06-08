@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
+import 'package:travel_app/controller/member_controller.dart';
 import 'package:travel_app/data/repository/cost_repo.dart';
 import 'package:travel_app/model/cost.dart';
+import 'package:travel_app/utils/custom_message.dart';
 
 class CostController extends GetxController {
   final costRepo = CostRepo();
@@ -46,30 +48,23 @@ class CostController extends GetxController {
     });
   }
 
-  // Future<int> calculateTotalCost()  async {
-  //   totalLoading.value = true;
-  //   int totalCost = 0;
-  //   cost.value.cost?.forEach((cost) {
-  //     totalCost += cost.amount ?? 0;
-  //   });
-  //   totalLoading.value = false;
-  //   update();
-  //   return totalCost;
-  // }
-
-  Future<int> calculateTotalCost() async {
-  totalLoading.value = true;
-  int totalCost = 0;
-  final costList = cost.value.cost ?? []; // Use null-aware operator to handle null value
-  costList.forEach((cost) {
-    totalCost += cost.amount ?? 0;
-  });
-  totalLoading.value = false;
-  update();
-  return totalCost;
-}
-
-  // final costModel = CostModel().obs;
+  Future<void> deleteMember(String url, String id) async {
+    costRepo.deleteCost(url).then((value) {
+      if (value['code'] == 200) {
+        Get.snackbar(
+          "Deleted",
+          "Cost Deleted successfully",
+        );
+        removeCost(id);
+      }
+      if (value['code'] == 404) {
+        Message.snackBar(value['message'],
+            title: "Can't delete. Status code + ${value['code']}");
+      }
+    }).onError((error, stackTrace) {
+      Message.snackBar(error.toString(), title: "Can't delete");
+    });
+  }
 
   void removeCost(String id) {
     cost.update((model) {
@@ -78,14 +73,29 @@ class CostController extends GetxController {
         model?.cost?.removeAt(index);
       }
     });
+
+    update();
   }
 
-  // int calculateTotalCost() {
-  //   int totalBalance = 0;
-  //   cost.value.cost?.forEach((cost) {
-  //     totalBalance += cost.amount ?? 0;
-  //   });
-  //   return totalBalance;
-  // }
+  int calculateTotalCost() {
+    int totalCost = 0;
+    cost.value.cost?.forEach((cost) {
+      totalCost += cost.amount ?? 0;
+    });
+    return totalCost;
+  }
 
+  int getTotalCost() {
+    return cost.value.cost?.length ?? 0;
+  }
+
+  double calculateAverageCostPerMember() {
+    int totalCost = calculateTotalCost();
+    int totalMembers = Get.find<MemberController>().getTotalMembers();
+    if (totalMembers > 0) {
+      return totalCost.toDouble() / totalMembers.toDouble();
+    } else {
+      return 0;
+    }
+  }
 }

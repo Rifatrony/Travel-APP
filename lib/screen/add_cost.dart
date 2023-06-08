@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable
+// ignore_for_file: unused_local_variable, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -32,6 +32,7 @@ class _AddCostState extends State<AddCost> {
   final costController = Get.put(CostController());
 
   bool isEdit = false;
+  DateTime _dateTime = DateTime.now();
 
   @override
   void initState() {
@@ -110,7 +111,45 @@ class _AddCostState extends State<AddCost> {
             ),
           ),
           SizedBox(
-            height: Diamentions.height10,
+            height: Diamentions.height20,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: Diamentions.width20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Select a date",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
+                    Text(
+                      _dateTime != null ? "${_dateTime.day.toString().padLeft(2, '0')}-${_dateTime.month.toString().padLeft(2, '0')}-${_dateTime.year.toString()}" : '',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  onPressed: (){
+                    _showDatePicker();
+                  },
+                  icon: const Icon(Icons.calendar_month_outlined),
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            height: Diamentions.height16,
           ),
           Obx(() {
             return AppButton(
@@ -145,7 +184,7 @@ class _AddCostState extends State<AddCost> {
       Map data = {
         "amount": amount,
         "reason": reason,
-        "date": "06/02/2023",
+        "date": _dateTime != null ? "${_dateTime.day.toString().padLeft(2, '0')}-${_dateTime.month.toString().padLeft(2, '0')}-${_dateTime.year.toString()}" : '',
       };
       costController.addCost(
         data,
@@ -155,4 +194,17 @@ class _AddCostState extends State<AddCost> {
   }
 
   void updateData() {}
+
+  void _showDatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(200),
+      lastDate: DateTime(2030),
+    ).then((value) {
+      setState(() {
+        _dateTime = value!;
+      });
+    });
+  }
 }

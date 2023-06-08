@@ -42,17 +42,20 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   final userController = Get.put(UserController());
   final memberController = Get.put(MemberController());
+  final costController = Get.put(CostController());
   // final tourController = Get.put(TourController());
+
+  final cost = Get.find<CostController>().calculateTotalCost();
 
   @override
   void initState() {
     super.initState();
     memberController.getMember("${AppConstants.memberUrl}/${widget.tourId}");
+    costController.getCost("${AppConstants.costUrl}/${widget.tourId}");
   }
 
   @override
   Widget build(BuildContext context) {
-    // final totalCost = Get.find<CostController>().calculateTotalCost();
     return Scaffold(
       body: Column(
         children: [
@@ -113,24 +116,28 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       fontSize: Diamentions.font20,
                                     ),
                                   ),
-                                  TextButton.icon(
-                                    onPressed: () {
-                                      // tourController.removeTour();
-                                      // Get.offAll(const TourScreen());
-                                      // Get.snackbar("Tour removed", "Add new tour");
-                                    },
-                                    icon: const Icon(
-                                      Icons.edit,
-                                      color: Colors.white,
-                                    ),
-                                    label: Text(
-                                      widget.tourName,
-                                      style: const TextStyle(
+                                  GetBuilder<TourController>(
+                                      builder: (controller) {
+                                    return TextButton.icon(
+                                      onPressed: () {
+                                        // controller.removeTourFromSP();
+                                        // Get.offAll(const TourScreen());
+                                        // Get.snackbar("Tour removed", "Add new tour");
+                                        Get.offAll(() => const TourScreen());
+                                      },
+                                      icon: const Icon(
+                                        Icons.edit,
                                         color: Colors.white,
-                                        fontSize: 16,
                                       ),
-                                    ),
-                                  ),
+                                      label: Text(
+                                        widget.tourName,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    );
+                                  })
                                 ],
                               );
                       },
@@ -181,65 +188,56 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     },
                                     title: "Total Balance",
                                     value:
-                                        "${controller.calculateTotalBalance()}",
+                                        "${controller.calculateTotalBalance()} (${controller.getTotalMembers()} person)",
                                   );
                                 },
                               ),
-
-                              GetBuilder<MemberController>(
+                              GetBuilder<CostController>(
                                 builder: (controller) {
                                   return BalanceContainer(
                                     onPress: () {
                                       Get.to(CostScreen(id: widget.tourId));
                                     },
                                     title: "Total Cost",
-                                    value:
-                                        "${controller.calculateTotalBalance()}",
+                                    value: "${controller.calculateTotalCost()}",
+                                  );
+                                },
+                              ),
+                              GetBuilder<CostController>(
+                                builder: (costController) {
+                                  return GetBuilder<MemberController>(
+                                    builder: (memberController) {
+                                      return BalanceContainer(
+                                        onPress: () {
+                                          Get.to(CostScreen(id: widget.tourId));
+                                        },
+                                        title: "Average Cost",
+                                        value: costController
+                                            .calculateAverageCostPerMember()
+                                            .toStringAsFixed(2),
+                                      );
+                                    },
                                   );
                                 },
                               ),
                               GetBuilder<MemberController>(
-                                builder: (controller) {
-                                  return BalanceContainer(
-                                    title: "Remaining",
-                                    value:
-                                        "${controller.calculateTotalBalance()}",
-                                  );
-                                },
-                              ),
-                              // GetBuilder<CostController>(
-                              //   builder: (costController) {
-                              //     // final costModel = costController.cost.value;
-                              //     if(costController.cost.value.cost != null ){
-                              //       final totalCost = costController.calculateTotalCost();
-                              //       return  BalanceContainer(
-                              //       title: "Total Cost",
-                              //       value:
-                              //           "$totalCost",
-                              //     );
-                              //     }
-                              //     else {
-                              //       return CircularProgressIndicator();
-                              //     }
-
-                              //   },
-                              // ),
-                              GetBuilder<MemberController>(
-                                builder: (controller) {
-                                  final totalMembers =
-                                      controller.getTotalMembers();
-                                  final totalBalance =
-                                      controller.calculateTotalBalance();
-                                  final averageBalance = totalMembers > 0
-                                      ? totalBalance / totalMembers
-                                      : 0;
-
-                                  // Format the average balance to two decimal places
-                                  final formattedAverageBalance =
-                                      averageBalance.toStringAsFixed(2);
-                                  return BalanceContainer(
-                                    title: "Average",
-                                    value: formattedAverageBalance,
+                                builder: (memberController) {
+                                  return GetBuilder<CostController>(
+                                    builder: (costController) {
+                                      return BalanceContainer(
+                                        onPress: () {
+                                          Get.to(
+                                            MemberScreen(
+                                              id: widget.tourId,
+                                              tourName: widget.tourName,
+                                            ),
+                                          );
+                                        },
+                                        title: "Remaining Balance",
+                                        value:
+                                            "${memberController.calculateRemainingBalance()}",
+                                      );
+                                    },
                                   );
                                 },
                               ),
@@ -297,7 +295,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           builder: (memberController) {
                             return ReusableRow(
                               title: "Total Balance",
-                              value: "${memberController.calculateTotalBalance()}",
+                              value:
+                                  "${memberController.calculateTotalBalance()}",
                             );
                           },
                         ),
@@ -310,8 +309,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             );
                           },
                         ),
-                        const ReusableRow(
-                            title: "Total Cost", value: "working"),
+                        GetBuilder<CostController>(
+                          builder: (costController) {
+                            return ReusableRow(
+                              title: "Total Cost",
+                              value: "${costController.calculateTotalCost()}",
+                            );
+                          },
+                        ),
                         GetBuilder<MemberController>(
                           builder: (memberController) {
                             final totalMembers =
@@ -331,12 +336,22 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             );
                           },
                         ),
-                        ReusableRow(
-                            title: "Remaining Balance",
-                            value: "working",),
+                        GetBuilder<MemberController>(
+                          builder: (memberController) {
+                            return GetBuilder<CostController>(
+                              builder: (costController) {
+                                return ReusableRow(
+                                  title: "Remaining Balance",
+                                  value:
+                                      "${memberController.calculateRemainingBalance()}",
+                                );
+                              },
+                            );
+                          },
+                        ),
                         ReusableRow(
                             title: "Start Date", value: "${widget.start}"),
-                         ReusableRow(title: "End Date", value: "${widget.end}"),
+                        ReusableRow(title: "End Date", value: "${widget.end}"),
                         SizedBox(
                           height: Diamentions.height16,
                         ),
