@@ -33,13 +33,6 @@ class DashBoardScreen extends StatefulWidget {
 }
 
 class _DashBoardScreenState extends State<DashBoardScreen> {
-  Map<String, double> dataMap = {
-    "Total Amount": 128550,
-    "Total Cost": 155520,
-    "Remaining Amount": 102720,
-    "Total Members": 10,
-  };
-
   final userController = Get.put(UserController());
   final memberController = Get.put(MemberController());
   final costController = Get.put(CostController());
@@ -52,10 +45,21 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     super.initState();
     memberController.getMember("${AppConstants.memberUrl}/${widget.tourId}");
     costController.getCost("${AppConstants.costUrl}/${widget.tourId}");
+    memberController.calculateTotalBalance();
+    costController.calculateTotalCost();
+    memberController.update();
+    costController.update();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Map<String, double> dataMap = {
+    //   "Total Amount": memberController.calculateTotalBalance().toDouble(),
+    //   "Total Cost": costController.calculateTotalCost().toDouble(),
+    //   "Remaining Amount":
+    //       memberController.calculateRemainingBalance().toDouble(),
+    //   "Total Members": memberController.getTotalMembers().toDouble(),
+    // };
     return Scaffold(
       body: Column(
         children: [
@@ -248,18 +252,42 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                         // Right side pie widget
                         Expanded(
                           flex: 3,
-                          child: PieChart(
-                            dataMap: dataMap,
-                            chartType: ChartType.ring,
-                            ringStrokeWidth: 12,
-                            chartRadius:
-                                MediaQuery.of(context).size.width / 3.7,
-                            legendOptions: const LegendOptions(
-                              legendPosition: LegendPosition.bottom,
-                            ),
-                            chartValuesOptions: const ChartValuesOptions(
-                              showChartValuesInPercentage: true,
-                            ),
+                          child: GetBuilder<MemberController>(
+                            builder: (memberController) {
+                              return GetBuilder<CostController>(
+                                builder: (costController) {
+                                  Map<String, double> dataMap = {
+                                    "Total Amount": memberController
+                                        .calculateTotalBalance()
+                                        .toDouble(),
+                                    "Total Cost": costController
+                                        .calculateTotalCost()
+                                        .toDouble(),
+                                    "Remaining Amount": memberController
+                                        .calculateRemainingBalance()
+                                        .toDouble(),
+                                    "Total Members": memberController
+                                        .getTotalMembers()
+                                        .toDouble(),
+                                  };
+
+                                  return PieChart(
+                                    dataMap: dataMap,
+                                    chartType: ChartType.ring,
+                                    ringStrokeWidth: 12,
+                                    chartRadius:
+                                        MediaQuery.of(context).size.width / 3.7,
+                                    legendOptions: const LegendOptions(
+                                      legendPosition: LegendPosition.bottom,
+                                    ),
+                                    chartValuesOptions:
+                                        const ChartValuesOptions(
+                                      showChartValuesInPercentage: true,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
                           ),
                         ),
                       ],
@@ -504,12 +532,22 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            BigText(text: "Members"),
-                            TextIcon(
-                              text: "See All",
-                              icon: Icons.arrow_forward_ios,
-                              iconSize: 18,
+                          children: [
+                            const BigText(text: "Members"),
+                            InkWell(
+                              onTap: () {
+                                Get.to(
+                                  MemberScreen(
+                                    id: widget.tourId,
+                                    tourName: widget.tourName,
+                                  ),
+                                );
+                              },
+                              child: const TextIcon(
+                                text: "See All",
+                                icon: Icons.arrow_forward_ios,
+                                iconSize: 18,
+                              ),
                             ),
                           ],
                         ),
@@ -527,8 +565,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                 ),
                                 itemCount: memberController
                                             .member.value.members!.length >
-                                        5
-                                    ? 5
+                                        3
+                                    ? 3
                                     : memberController
                                         .member.value.members!.length,
                                 itemBuilder: (context, index) {
