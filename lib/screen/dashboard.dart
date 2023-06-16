@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:travel_app/controller/auth_controller.dart';
 import 'package:travel_app/controller/cost_controller.dart';
 import 'package:travel_app/controller/member_controller.dart';
 import 'package:travel_app/controller/tour_controller.dart';
 import 'package:travel_app/controller/user_controller.dart';
 import 'package:travel_app/screen/cost_screen.dart';
+import 'package:travel_app/screen/login_screen.dart';
 import 'package:travel_app/screen/member_screen.dart';
 import 'package:travel_app/screen/tour_screen.dart';
 import 'package:travel_app/utils/app_constants.dart';
@@ -33,6 +35,7 @@ class DashBoardScreen extends StatefulWidget {
 }
 
 class _DashBoardScreenState extends State<DashBoardScreen> {
+  final authController = Get.put(AuthController());
   final userController = Get.put(UserController());
   final memberController = Get.put(MemberController());
   final costController = Get.put(CostController());
@@ -83,15 +86,16 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     InkWell(
                       onTap: () {},
                       child: const CircleAvatar(
                         radius: 24,
-                        // backgroundImage: AssetImage(
-                        //   "assets/images/profile_image.jpeg",
-                        // ),
+                        backgroundImage: AssetImage(
+                          "assets/profile.jpg",
+                        ),
                       ),
                     ),
                     SizedBox(
@@ -100,7 +104,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     Obx(
                       () {
                         return userController.loading.value
-                            ? const CircularProgressIndicator()
+                            ? Container()
                             : Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -113,8 +117,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     ),
                                   ),
                                   Text(
-                                    userController.user.value.user!.phone
-                                        .toString(),
+                                    "0${userController.user.value.user!.phone}",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: Diamentions.font20,
@@ -146,6 +149,23 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               );
                       },
                     ),
+                    CircleAvatar(
+                      backgroundColor: Colors.purple.shade900,
+                      child: IconButton(
+                        onPressed: () async {
+                          var token = authController.getAccessToken();
+                          if (token != null) {
+                            authController.removeUser();
+                            Get.offAll(()=> const LoginScreen());
+                          } else {
+                          }
+                        },
+                        icon: const Icon(
+                          Icons.logout,
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ],
@@ -155,7 +175,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           // Body container
           Container(
             margin: EdgeInsets.only(
-              top: Diamentions.height10,
+              top: Diamentions.height5,
               bottom: Diamentions.height10,
             ),
             height: Diamentions.screenHeight - Diamentions.height160 - 21,
@@ -459,67 +479,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   SizedBox(
                     height: Diamentions.height16,
                   ),
-                  // Weather Section
-                  Container(
-                    margin: EdgeInsets.only(
-                      left: Diamentions.width10,
-                      right: Diamentions.width10,
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            BigText(
-                              text: "Today's weather Update",
-                              size: 18,
-                            ),
-                            BigText(
-                              text: "Gazipur",
-                              size: 14,
-                            ),
-                          ],
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(
-                            top: 10,
-                            bottom: 10,
-                          ),
-                          height: 150,
-                          width: double.maxFinite,
-                          child: ListView.builder(
-                            physics: const BouncingScrollPhysics(),
-                            padding: const EdgeInsets.only(
-                              top: 8,
-                              bottom: 8,
-                            ),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: 5,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                margin: const EdgeInsets.only(
-                                  left: 10,
-                                  right: 10,
-                                ),
-                                height: 100,
-                                width: 100,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(
-                                    16,
-                                  ),
-                                  color: Colors.purple.shade100,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(
-                    height: Diamentions.height10,
-                  ),
 
                   // Members section
                   Column(
@@ -598,17 +557,17 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       ),
                                       leading: const CircleAvatar(
                                         radius: 30,
-                                        // backgroundImage: AssetImage(
-                                        //   "assets/images/profile_image.jpeg",
-                                        // ),
-                                      ),
-                                      trailing: IconButton(
-                                        onPressed: () {},
-                                        icon: const Icon(
-                                          Icons.more_vert,
+                                        backgroundImage: AssetImage(
+                                          "assets/profile.jpg",
                                         ),
-                                        color: Colors.white,
                                       ),
+                                      // trailing: IconButton(
+                                      //   onPressed: () {},
+                                      //   icon: const Icon(
+                                      //     Icons.more_vert,
+                                      //   ),
+                                      //   color: Colors.white,
+                                      // ),
                                     ),
                                   );
                                 },

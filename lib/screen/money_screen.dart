@@ -8,6 +8,7 @@ import 'package:travel_app/utils/diamention.dart';
 import 'package:travel_app/widget/app_button.dart';
 import 'package:travel_app/widget/app_text_form.dart';
 import 'package:travel_app/widget/big_text.dart';
+import 'package:travel_app/widget/shadow_text_form.dart';
 
 class MoneyScreen extends StatefulWidget {
   final String id;
@@ -83,13 +84,9 @@ class _MoneyScreenState extends State<MoneyScreen> {
           //     },
           // ),
 
-          AppTextForm(
-            hint: "New Amount",
-            label: "New Amount",
-            controller: amountController,
-            prefixIcon: Icons.request_quote,
-            inputType: TextInputType.number,
-          ),
+          ShadowTextForm(hint: "New Amount", controller: amountController, inputType: TextInputType.number, ),
+
+         
           GetBuilder<MemberController>(
             builder: (member) {
               return AppButton(
@@ -98,7 +95,7 @@ class _MoneyScreenState extends State<MoneyScreen> {
                   isAddMoney ? submitMoney() : withdrawMoney();
                 },
                 title: isAddMoney ? "Submit" : "Withdraw",
-                radius: Diamentions.radius20,
+                buttonColor: Colors.redAccent.shade400,
               );
             },
           ),

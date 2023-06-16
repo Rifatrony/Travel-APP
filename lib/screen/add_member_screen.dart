@@ -7,6 +7,7 @@ import 'package:travel_app/utils/app_constants.dart';
 import 'package:travel_app/utils/diamention.dart';
 import 'package:travel_app/widget/app_button.dart';
 import 'package:travel_app/widget/app_text_form.dart';
+import 'package:travel_app/widget/shadow_text_form.dart';
 
 class AddMemberScreen extends StatefulWidget {
   String id;
@@ -31,8 +32,6 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
   final phoneController = TextEditingController();
   final amountController = TextEditingController();
 
-  
-
   bool isEdit = false;
 
   @override
@@ -47,7 +46,6 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
       nameController.text = name.toString();
       phoneController.text = phone.toString();
       amountController.text = amount.toString();
-
     }
   }
 
@@ -57,6 +55,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
       appBar: AppBar(
         title: Text(isEdit ? "Update Member" : "Add Member"),
         backgroundColor: Colors.redAccent.shade400,
+        elevation: 0,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -65,37 +64,42 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
           SizedBox(
             height: Diamentions.height20,
           ),
-          AppTextForm(
+          ShadowTextForm(
             hint: "Name",
-            label: "Name",
             controller: nameController,
-            prefixIcon: Icons.person,
             inputType: TextInputType.name,
           ),
-          AppTextForm(
+
+          SizedBox(
+            height: Diamentions.height20,
+          ),
+
+          ShadowTextForm(
             hint: "Phone",
-            label: "Phone",
             controller: phoneController,
-            prefixIcon: Icons.phone,
             inputType: TextInputType.phone,
           ),
+          SizedBox(
+            height: Diamentions.height20,
+          ),
 
-          isEdit? const Text("Show here previous money"): Container(),
-
-          AppTextForm(
+          isEdit ? const Text("Show here previous money") : Container(),
+          
+          
+          ShadowTextForm(
             hint: "Amount",
-            label: "Amount",
             controller: amountController,
-            prefixIcon: Icons.request_quote,
             inputType: TextInputType.number,
           ),
-          GetBuilder<MemberController>(builder: (memberController){
+          
+          
+          GetBuilder<MemberController>(builder: (memberController) {
             return AppButton(
               onPress: () {
                 isEdit ? updateMember() : saveMember();
               },
               title: isEdit ? "Update Member" : "Add Member",
-              radius: Diamentions.radius16,
+              buttonColor: Colors.redAccent.shade400,
             );
           })
         ],
@@ -135,8 +139,6 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
       );
     }
   }
-  
-  updateMember() {
-    
-  }
+
+  updateMember() {}
 }

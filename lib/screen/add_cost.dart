@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:travel_app/controller/cost_controller.dart';
+import 'package:travel_app/controller/member_controller.dart';
 import 'package:travel_app/utils/app_constants.dart';
 import 'package:travel_app/utils/diamention.dart';
 import 'package:travel_app/widget/app_button.dart';
@@ -30,6 +31,7 @@ class _AddCostState extends State<AddCost> {
   final reasonController = TextEditingController();
 
   final costController = Get.put(CostController());
+  final memberController = Get.put(MemberController());
 
   bool isEdit = false;
   DateTime _dateTime = DateTime.now();
@@ -58,6 +60,23 @@ class _AddCostState extends State<AddCost> {
       ),
       body: Column(
         children: [
+          SizedBox(
+            height: Diamentions.height20,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Remaining Balance ",
+                  style: TextStyle(fontSize: 18),
+                ),
+                Text(memberController.calculateRemainingBalance().toString(),
+                    style: const TextStyle(fontSize: 18)),
+              ],
+            ),
+          ),
           SizedBox(
             height: Diamentions.height20,
           ),
@@ -130,7 +149,9 @@ class _AddCostState extends State<AddCost> {
                       ),
                     ),
                     Text(
-                      _dateTime != null ? "${_dateTime.day.toString().padLeft(2, '0')}-${_dateTime.month.toString().padLeft(2, '0')}-${_dateTime.year.toString()}" : '',
+                      _dateTime != null
+                          ? "${_dateTime.day.toString().padLeft(2, '0')}-${_dateTime.month.toString().padLeft(2, '0')}-${_dateTime.year.toString()}"
+                          : '',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -140,7 +161,7 @@ class _AddCostState extends State<AddCost> {
                   ],
                 ),
                 IconButton(
-                  onPressed: (){
+                  onPressed: () {
                     _showDatePicker();
                   },
                   icon: const Icon(Icons.calendar_month_outlined),
@@ -170,7 +191,12 @@ class _AddCostState extends State<AddCost> {
     String amount = amountController.text.trim();
     String reason = reasonController.text.trim();
 
-    if (amount.isEmpty) {
+    if (memberController.calculateRemainingBalance().toString().isEmpty) {
+      Get.snackbar(
+        "Amount not found for cost",
+        "Add some member first and add money with the member",
+      );
+    } else if (amount.isEmpty) {
       Get.snackbar(
         "Amount Required",
         "Write amount here",
@@ -184,7 +210,9 @@ class _AddCostState extends State<AddCost> {
       Map data = {
         "amount": amount,
         "reason": reason,
-        "date": _dateTime != null ? "${_dateTime.day.toString().padLeft(2, '0')}-${_dateTime.month.toString().padLeft(2, '0')}-${_dateTime.year.toString()}" : '',
+        "date": _dateTime != null
+            ? "${_dateTime.day.toString().padLeft(2, '0')}-${_dateTime.month.toString().padLeft(2, '0')}-${_dateTime.year.toString()}"
+            : '',
       };
       costController.addCost(
         data,

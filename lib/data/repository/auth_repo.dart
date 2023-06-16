@@ -11,6 +11,11 @@ class AuthRepo{
     return response;
   }
 
+  Future<dynamic> registration(dynamic data) async {
+    dynamic response = await apiServices.loginApi(data, AppConstants.registrationUrl);
+    return response;
+  }
+
   Future<bool> saveUser(String token) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     sp.setString("access_token", token);

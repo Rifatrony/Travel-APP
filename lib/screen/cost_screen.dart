@@ -4,6 +4,7 @@ import 'package:travel_app/controller/cost_controller.dart';
 import 'package:travel_app/screen/add_cost.dart';
 import 'package:travel_app/utils/app_constants.dart';
 import 'package:travel_app/utils/diamention.dart';
+import 'package:travel_app/widget/app_floating_action_button.dart';
 import 'package:travel_app/widget/big_text.dart';
 import 'package:travel_app/widget/small_text.dart';
 
@@ -125,26 +126,12 @@ class _CostScreenState extends State<CostScreen> {
           }
         },
       ),
-      floatingActionButton: SizedBox(
-        width: 100,
-        height: 40,
-        child: FloatingActionButton(
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(15.0),
-            ),
-          ),
-          elevation: 0,
-          child: Text(
-            "Add Cost",
-            style: TextStyle(
-              fontSize: Diamentions.font16,
-            ),
-          ),
-          onPressed: () {
-            navigateToCostPage();
-          },
-        ),
+      floatingActionButton: AppFloatingActionButton(
+        title: "Add Cost",
+        color: Colors.redAccent.shade400,
+        onPress: () {
+          navigateToCostPage();
+        },
       ),
     );
   }

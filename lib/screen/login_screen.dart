@@ -8,6 +8,8 @@ import 'package:travel_app/utils/custom_message.dart';
 import 'package:travel_app/utils/diamention.dart';
 import 'package:travel_app/widget/app_button.dart';
 import 'package:travel_app/widget/app_text_form.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:travel_app/widget/shadow_text_form.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -31,28 +33,28 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           Center(
             child: Text(
-              "Login to\nContinue",
+              "Travel Management\nSystem",
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: Diamentions.font20, letterSpacing: 1),
+              style: GoogleFonts.lato(
+                  fontSize: Diamentions.font20, letterSpacing: 1),
             ),
           ),
           SizedBox(
             height: Diamentions.height20,
           ),
-          AppTextForm(
+          ShadowTextForm(
             hint: "Phone",
-            label: "Phone",
             controller: phoneController,
-            prefixIcon: Icons.phone,
             inputType: TextInputType.phone,
           ),
-          AppTextForm(
+          SizedBox(
+            height: Diamentions.height16,
+          ),
+          ShadowTextForm(
             hint: "Password",
-            label: "Password",
             controller: passwordController,
-            prefixIcon: Icons.lock,
             inputType: TextInputType.text,
-            obscureText: true,
+            isVisible: true,
           ),
           Obx(
             () => AppButton(
@@ -61,13 +63,29 @@ class _LoginScreenState extends State<LoginScreen> {
                 userLogin();
               },
               title: "Login",
+              height: 45,
             ),
           ),
-          AppButton(
-            onPress: () {
+          const SizedBox(
+            height: 10,
+          ),
+          InkWell(
+            onTap: () {
               Get.to(() => const SignupScreen());
             },
-            title: "No Account sign up",
+            child: RichText(
+              text: const TextSpan(
+                text: 'No Account Yet? ',
+                style: TextStyle(color: Colors.black),
+                children: [
+                  TextSpan(
+                    text: 'Sign Up',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.blue),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

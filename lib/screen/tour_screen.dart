@@ -61,101 +61,109 @@ class _TourScreenState extends State<TourScreen> {
         builder: (tourController) {
           return tourController.loading.value
               ? const Center(child: CircularProgressIndicator())
-              : ListView.builder(
-                  padding: EdgeInsets.only(
-                    left: Diamentions.width10,
-                    right: 10,
-                    top: 10,
-                  ),
-                  itemCount: tourController.tour.value.tour!.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        //Get.toNamed(RouteHelper.getDashboard(tourController.tourList[index].id.toString(), index));
-                        tourController.saveTour(
-                          tourController.tour.value.tour![index].id.toString(),
-                          tourController.tour.value.tour![index].name
-                              .toString(),
-                        );
-                        Get.to(
-                          DashBoardScreen(
-                            tourName: tourController
-                                .tour.value.tour![index].name
-                                .toString(),
-                            tourId: tourController.tour.value.tour![index].id
-                                .toString(),
-                            start: tourController
-                                .tour.value.tour![index].startDate
-                                .toString(),
-                            end: tourController.tour.value.tour![index].endDate
-                                .toString(),
+              : tourController.tour.value.tour!.isEmpty
+                  ? const Center(
+                      child: Text("No tour found, first add a tour"),
+                    )
+                  : ListView.builder(
+                      padding: EdgeInsets.only(
+                        left: Diamentions.width10,
+                        right: 10,
+                        top: 10,
+                      ),
+                      itemCount: tourController.tour.value.tour!.length,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            //Get.toNamed(RouteHelper.getDashboard(tourController.tourList[index].id.toString(), index));
+                            tourController.saveTour(
+                              tourController.tour.value.tour![index].id
+                                  .toString(),
+                              tourController.tour.value.tour![index].name
+                                  .toString(),
+                            );
+                            Get.to(
+                              DashBoardScreen(
+                                tourName: tourController
+                                    .tour.value.tour![index].name
+                                    .toString(),
+                                tourId: tourController
+                                    .tour.value.tour![index].id
+                                    .toString(),
+                                start: tourController
+                                    .tour.value.tour![index].startDate
+                                    .toString(),
+                                end: tourController
+                                    .tour.value.tour![index].endDate
+                                    .toString(),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: EdgeInsets.only(
+                              left: Diamentions.width10,
+                              right: Diamentions.width10,
+                              top: Diamentions.height10,
+                              bottom: Diamentions.height10,
+                            ),
+                            margin: EdgeInsets.only(
+                              bottom: Diamentions.height10,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.purple.shade900,
+                            ),
+                            child: ListTile(
+                              leading: Text(
+                                "${index + 1}.",
+                                style: TextStyle(
+                                  fontSize: Diamentions.font20,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              title: BigText(
+                                text: tourController
+                                    .tour.value.tour![index].name
+                                    .toString(),
+                                color: Colors.white,
+                              ),
+                              subtitle: SmallText(
+                                text:
+                                    "From ${tourController.tour.value.tour![index].startDate} to ${tourController.tour.value.tour![index].endDate}",
+                                color: Colors.white54,
+                              ),
+                              horizontalTitleGap: 0,
+                              trailing: PopupMenuButton(
+                                color: Colors.white,
+                                onSelected: (value) {
+                                  if (value == 'edit') {
+                                    navigateToEditTourPage(index);
+                                  } else {
+                                    final url =
+                                        "${AppConstants.deleteTourUrl}/${tourController.tour.value.tour![index].id}";
+                                    tourController.deleteTour(
+                                      url,
+                                      tourController.tour.value.tour![index].id
+                                          .toString(),
+                                    );
+                                  }
+                                },
+                                itemBuilder: (context) => [
+                                  const PopupMenuItem(
+                                    value: "edit",
+                                    child: Text("Edit"),
+                                  ),
+                                  const PopupMenuItem(
+                                    value: "delete",
+                                    child: Text("Delete"),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         );
                       },
-                      child: Container(
-                        padding: EdgeInsets.only(
-                          left: Diamentions.width10,
-                          right: Diamentions.width10,
-                          top: Diamentions.height10,
-                          bottom: Diamentions.height10,
-                        ),
-                        margin: EdgeInsets.only(
-                          bottom: Diamentions.height10,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.purple.shade900,
-                        ),
-                        child: ListTile(
-                          leading: Text(
-                            "${index + 1}.",
-                            style: TextStyle(
-                              fontSize: Diamentions.font20,
-                              color: Colors.white,
-                            ),
-                          ),
-                          title: BigText(
-                            text: tourController.tour.value.tour![index].name
-                                .toString(),
-                            color: Colors.white,
-                          ),
-                          subtitle: SmallText(
-                            text:
-                                "From ${tourController.tour.value.tour![index].startDate} to ${tourController.tour.value.tour![index].endDate}",
-                            color: Colors.white54,
-                          ),
-                          horizontalTitleGap: 0,
-                          trailing: PopupMenuButton(
-                            color: Colors.white,
-                            onSelected: (value) {
-                              if (value == 'edit') {
-                                navigateToEditTourPage(index);
-                              } else {
-                                final url =
-                                    "${AppConstants.deleteTourUrl}/${tourController.tour.value.tour![index].id}";
-                                tourController.deleteTour(
-                                  url,
-                                  tourController.tour.value.tour![index].id
-                                      .toString(),
-                                );
-                              }
-                            },
-                            itemBuilder: (context) => [
-                              const PopupMenuItem(
-                                value: "edit",
-                                child: Text("Edit"),
-                              ),
-                              const PopupMenuItem(
-                                value: "delete",
-                                child: Text("Delete"),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
                     );
-                  },
-                );
         },
       ),
       floatingActionButton: AppFloatingActionButton(
@@ -182,7 +190,7 @@ class _TourScreenState extends State<TourScreen> {
   }
 
   Future<void> navigateToEditTourPage(int index) async {
-     final route = MaterialPageRoute(
+    final route = MaterialPageRoute(
       builder: (context) => AddTourScreen(
         id: tourController.tour.value.tour![index].id,
         name: tourController.tour.value.tour![index].name,

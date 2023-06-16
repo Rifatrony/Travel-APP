@@ -2,12 +2,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:travel_app/controller/auth_controller.dart';
 import 'package:travel_app/screen/login_screen.dart';
 import 'package:travel_app/utils/custom_message.dart';
 import 'package:travel_app/utils/diamention.dart';
 import 'package:travel_app/widget/app_button.dart';
 import 'package:travel_app/widget/app_text_form.dart';
 import 'package:travel_app/widget/big_text.dart';
+import 'package:travel_app/widget/shadow_text_form.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -17,6 +20,9 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+
+  final authController = Get.put(AuthController());
+
   var nameController = TextEditingController();
   var phoneController = TextEditingController();
   var passwordController = TextEditingController();
@@ -24,52 +30,62 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const BigText(text: "Signup Page"),
-            SizedBox(
-              height: Diamentions.height16,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Center(
+            child: Text(
+              "Travel Management\nSystem",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.lato(
+                  fontSize: Diamentions.font20, letterSpacing: 1),
             ),
-            AppTextForm(
-              hint: "Name",
-              label: "Name",
-              controller: nameController,
-              prefixIcon: Icons.person,
-              inputType: TextInputType.name,
+          ),
+          SizedBox(
+            height: Diamentions.height20,
+          ),
+          ShadowTextForm(hint: "Name", controller: nameController, inputType: TextInputType.name,),
+          SizedBox(
+            height: Diamentions.height16,
+          ),
+          ShadowTextForm(hint: "Phone", controller: phoneController, inputType: TextInputType.phone,),
+          SizedBox(
+            height: Diamentions.height16,
+          ),
+          ShadowTextForm(hint: "Password", controller: passwordController, inputType: TextInputType.text, isVisible: true,),
+         
+          AppButton(
+            onPress: () {
+              userRegistration();
+            },
+            title: "Sign Up",
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          InkWell(
+            onTap: () {
+              Get.to(() => const LoginScreen());
+            },
+            child: RichText(
+              text: const TextSpan(
+                text: 'Already Have Account? ',
+                style: TextStyle(color: Colors.black),
+                children: [
+                  TextSpan(
+                    text: 'Sign In',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            AppTextForm(
-              hint: "Phone",
-              label: "Phone",
-              controller: phoneController,
-              prefixIcon: Icons.phone,
-              inputType: TextInputType.phone,
-            ),
-            AppTextForm(
-              hint: "Password",
-              label: "Password",
-              controller: passwordController,
-              prefixIcon: Icons.lock_outline,
-              inputType: TextInputType.text,
-              obscureText: true,
-            ),
-            AppButton(
-              onPress: () {
-                
-                userRegistration();
-              },
-              title: "Sign Up",
-            ),
-            AppButton(
-              onPress: () {
-                Get.to(() => const LoginScreen());
-              },
-              title: "Have Account Login",
-            ),
-          ],
-        )
-        ,
+          ),
+        ],
+      ),
     );
   }
 
@@ -99,20 +115,12 @@ class _SignupScreenState extends State<SignupScreen> {
         title: "Password",
       );
     } else {
-  
-      // authController.registration(name, phone, password).then((status) {
-      //   if (status.isSuccess) {
-      //     Get.snackBar("Registration successful",
-      //         "Registration Successful");
-      //     phoneController.text = '';
-      //     passwordController.text = '';
-      //     nameController.text = '';
-      //     Get.to(()=> const LoginScreen());
-      //   } else {
-      //     Message.snnackBar("Please check your email or password",
-      //         title: status.message);
-      //   }
-      // });
+      Map data = {
+        "name": name,
+        "phone": phone,
+        "password": password,
+      };
+      authController.registration(data);
     }
   }
 }

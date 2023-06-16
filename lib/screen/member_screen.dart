@@ -47,159 +47,163 @@ class _MemberScreenState extends State<MemberScreen> {
           // final reversedMembers = memberController.member.value.members!.reversed;
           final reversedMembers =
               memberController.member.value.members!.reversed.toList();
-          return ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.only(
-              left: Diamentions.width10,
-              right: Diamentions.width10,
-              top: Diamentions.height5,
-              bottom: Diamentions.height10,
-            ),
-            itemCount: reversedMembers.length,
-            itemBuilder: (context, index) {
-              final Member member = reversedMembers[index];
-              return Container(
-                margin: EdgeInsets.only(
-                  left: Diamentions.width5,
-                  right: Diamentions.width5,
-                  top: Diamentions.height10,
-                  bottom: Diamentions.height10,
-                ),
-                width: double.maxFinite,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(
-                    Diamentions.radius20,
+          return reversedMembers.isEmpty
+              ? const Center(child: Text("No member found"))
+              : ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  padding: EdgeInsets.only(
+                    left: Diamentions.width10,
+                    right: Diamentions.width10,
+                    top: Diamentions.height5,
+                    bottom: Diamentions.height10,
                   ),
-                  color: Colors.purple.shade900,
-                ),
-                child: Column(
-                  children: [
-                    // Name and picture container
-                    Container(
+                  itemCount: reversedMembers.length,
+                  itemBuilder: (context, index) {
+                    final Member member = reversedMembers[index];
+                    return Container(
                       margin: EdgeInsets.only(
-                        left: Diamentions.width10,
-                        right: Diamentions.width10,
-                        top: Diamentions.height20,
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              NameRow(
-                                name: member.name.toString(),
-                                serial: "${index + 1}.",
-                              ),
-                              SizedBox(
-                                height: Diamentions.height5,
-                              ),
-                              SmallText(
-                                text: "0${member.phone}",
-                                size: Diamentions.font16,
-                                color: Colors.white,
-                              ),
-                            ],
-                          ),
-                          PopupMenuButton(
-                            color: Colors.white,
-                            onSelected: (value) {
-                              if (value == 'edit') {
-                                navigateToEditMemberPage(index);
-                              } else if (value == 'delete') {
-                                final url =
-                                    "${AppConstants.deleteMemberUrl}/${member.id}";
-                                memberController.deleteMember(
-                                    url, member.id.toString());
-                              } else if (value == 'add-money') {
-                                navigateToAddMoneyPage(index);
-                              } else if (value == 'withdraw-money') {
-                                navigateToWithdrawMoneyPage(index);
-                              }
-                            },
-                            itemBuilder: (context) {
-                              return [
-                                const PopupMenuItem(
-                                  value: "edit",
-                                  child: Text("Edit"),
-                                ),
-                                const PopupMenuItem(
-                                  value: "delete",
-                                  child: Text("Delete"),
-                                ),
-                                const PopupMenuItem(
-                                  value: "add-money",
-                                  child: Text("Add money"),
-                                ),
-                                const PopupMenuItem(
-                                  value: "withdraw-money",
-                                  child: Text("Withdraw money"),
-                                ),
-                              ];
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    SmallText(
-                      text: widget.tourName,
-                      color: Colors.black,
-                      size: 18,
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(
-                        left: Diamentions.width10,
-                        right: Diamentions.width10,
-                        bottom: Diamentions.height20,
+                        left: Diamentions.width5,
+                        right: Diamentions.width5,
                         top: Diamentions.height10,
+                        bottom: Diamentions.height10,
+                      ),
+                      width: double.maxFinite,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(
+                          Diamentions.radius20,
+                        ),
+                        color: Colors.purple.shade900,
                       ),
                       child: Column(
                         children: [
-                          ReusableRow(
-                            title: "Total Given",
-                            value: member.givenAmount.toString(),
+                          // Name and picture container
+                          Container(
+                            margin: EdgeInsets.only(
+                              left: Diamentions.width10,
+                              right: Diamentions.width10,
+                              top: Diamentions.height20,
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    NameRow(
+                                      name: member.name.toString(),
+                                      serial: "${index + 1}.",
+                                    ),
+                                    SizedBox(
+                                      height: Diamentions.height5,
+                                    ),
+                                    SmallText(
+                                      text: "0${member.phone}",
+                                      size: Diamentions.font16,
+                                      color: Colors.white,
+                                    ),
+                                  ],
+                                ),
+                                PopupMenuButton(
+                                  color: Colors.white,
+                                  onSelected: (value) {
+                                    if (value == 'edit') {
+                                      navigateToEditMemberPage(index);
+                                    } else if (value == 'delete') {
+                                      final url =
+                                          "${AppConstants.deleteMemberUrl}/${member.id}";
+                                      memberController.deleteMember(
+                                          url, member.id.toString());
+                                    } else if (value == 'add-money') {
+                                      navigateToAddMoneyPage(index);
+                                    } else if (value == 'withdraw-money') {
+                                      navigateToWithdrawMoneyPage(index);
+                                    }
+                                  },
+                                  itemBuilder: (context) {
+                                    return [
+                                      const PopupMenuItem(
+                                        value: "edit",
+                                        child: Text("Edit"),
+                                      ),
+                                      const PopupMenuItem(
+                                        value: "delete",
+                                        child: Text("Delete"),
+                                      ),
+                                      const PopupMenuItem(
+                                        value: "add-money",
+                                        child: Text("Add money"),
+                                      ),
+                                      const PopupMenuItem(
+                                        value: "withdraw-money",
+                                        child: Text("Withdraw money"),
+                                      ),
+                                    ];
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                          GetBuilder<CostController>(
-                            builder: (costController) {
-                              return GetBuilder<MemberController>(
-                                builder: (memberController) {
-                                  return ReusableRow(
-                                    title: "Average Cost",
-                                    value: costController
-                                        .calculateAverageCostPerMember()
-                                        .toStringAsFixed(2),
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                          GetBuilder<MemberController>(
-                            builder: (memberController) {
-                              List<Member> members =
-                                  memberController.member.value.members!;
-                              List<double> returnAmounts = memberController
-                                  .calculateReturnAmountPerMember();
-                              members = members.reversed.toList();
-                              returnAmounts = returnAmounts.reversed.toList();
-                              double returnAmount = returnAmounts[index];
 
-                              return ReusableRow(
-                                title: "Get Return",
-                                value: returnAmount.toString(),
-                              );
-                            },
+                          SmallText(
+                            text: widget.tourName,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+
+                          Container(
+                            margin: EdgeInsets.only(
+                              left: Diamentions.width10,
+                              right: Diamentions.width10,
+                              bottom: Diamentions.height20,
+                              top: Diamentions.height10,
+                            ),
+                            child: Column(
+                              children: [
+                                ReusableRow(
+                                  title: "Total Given",
+                                  value: member.givenAmount.toString(),
+                                ),
+                                GetBuilder<CostController>(
+                                  builder: (costController) {
+                                    return GetBuilder<MemberController>(
+                                      builder: (memberController) {
+                                        return ReusableRow(
+                                          title: "Average Cost",
+                                          value: costController
+                                              .calculateAverageCostPerMember()
+                                              .toStringAsFixed(2),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                                GetBuilder<MemberController>(
+                                  builder: (memberController) {
+                                    List<Member> members =
+                                        memberController.member.value.members!;
+                                    List<double> returnAmounts =
+                                        memberController
+                                            .calculateReturnAmountPerMember();
+                                    members = members.reversed.toList();
+                                    returnAmounts =
+                                        returnAmounts.reversed.toList();
+                                    double returnAmount = returnAmounts[index];
+
+                                    return ReusableRow(
+                                      title: "Get Return",
+                                      value: returnAmount.toString(),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
+                    );
+                  },
+                );
         },
       ),
       floatingActionButton: AppFloatingActionButton(

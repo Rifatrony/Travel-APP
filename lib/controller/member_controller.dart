@@ -42,15 +42,17 @@ class MemberController extends GetxController {
   Future<void> addMember(dynamic data, String url) async {
     setAddLoading(true);
     memberRepo.addMember(data, url).then((value) {
-      if (value['code'] == 400) {
-        Get.snackbar("Error Occured with status code 400", value['message']);
-        setAddLoading(false);
-      } else if (value['code'] == 200) {
-        Get.snackbar(
-            "Member added successfully", "New member added to the tour");
-        setAddLoading(false);
-      } else {
-        Get.snackbar("Error Occured with status code 500", value['message']);
+      if (value['code'] == 200) {
+        if (value['success'] == true) {
+          Get.snackbar(
+              "Member added successfully", "New member added to the tour");
+          setAddLoading(false);
+        } else {
+          Get.snackbar("Error Occured", value['message']);
+          setAddLoading(false);
+        }
+      }else {
+        Get.snackbar("Error Occured ", value['message']);
         setAddLoading(false);
       }
     }).onError((error, stackTrace) {
@@ -163,18 +165,18 @@ class MemberController extends GetxController {
   }
 
   List<double> calculateReturnAmountPerMember() {
-  List<Member> members = member.value.members!;
-  double averageCostPerMember = Get.find<CostController>().calculateAverageCostPerMember();
+    List<Member> members = member.value.members!;
+    double averageCostPerMember =
+        Get.find<CostController>().calculateAverageCostPerMember();
 
-  List<double> returnAmounts = [];
+    List<double> returnAmounts = [];
 
-  for (Member member in members) {
-    num givenAmount = member.givenAmount ?? 0;
-    double returnAmount = givenAmount - averageCostPerMember;
-    returnAmounts.add(returnAmount);
+    for (Member member in members) {
+      num givenAmount = member.givenAmount ?? 0;
+      double returnAmount = givenAmount - averageCostPerMember;
+      returnAmounts.add(returnAmount);
+    }
+
+    return returnAmounts;
   }
-
-  return returnAmounts;
-}
-
 }

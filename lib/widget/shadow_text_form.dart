@@ -5,12 +5,14 @@ class ShadowTextForm extends StatelessWidget {
   final String hint;
   final TextEditingController controller;
   final TextInputType inputType;
+  final bool? isVisible;
 
   const ShadowTextForm({
     super.key,
     required this.hint,
     required this.controller,
     required this.inputType,
+    this.isVisible = false,
   });
 
   @override
@@ -32,10 +34,12 @@ class ShadowTextForm extends StatelessWidget {
           ],
         ),
         child: TextFormField(
+          obscureText: isVisible!,
           keyboardType: inputType,
           controller: controller,
           style: const TextStyle(fontSize: 14),
           decoration: InputDecoration(
+            
             border: InputBorder.none,
             contentPadding: EdgeInsets.only(
               left: Diamentions.width16,
