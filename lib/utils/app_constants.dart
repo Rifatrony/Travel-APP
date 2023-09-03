@@ -1,5 +1,5 @@
 class AppConstants{
-  static const String baseUrl = 'http://192.168.0.103:5050/api';
+  static const String baseUrl = 'https://trip-app-api-zoy4.onrender.com/api';
   static const String loginUrl = '$baseUrl/auth/login';
   static const String registrationUrl = '$baseUrl/auth/registration';
   static const String profileUrl = '$baseUrl/auth/profile';

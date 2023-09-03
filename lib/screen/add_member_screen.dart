@@ -6,7 +6,6 @@ import 'package:travel_app/controller/member_controller.dart';
 import 'package:travel_app/utils/app_constants.dart';
 import 'package:travel_app/utils/diamention.dart';
 import 'package:travel_app/widget/app_button.dart';
-import 'package:travel_app/widget/app_text_form.dart';
 import 'package:travel_app/widget/shadow_text_form.dart';
 
 class AddMemberScreen extends StatefulWidget {

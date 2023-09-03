@@ -8,8 +8,6 @@ import 'package:travel_app/screen/login_screen.dart';
 import 'package:travel_app/utils/custom_message.dart';
 import 'package:travel_app/utils/diamention.dart';
 import 'package:travel_app/widget/app_button.dart';
-import 'package:travel_app/widget/app_text_form.dart';
-import 'package:travel_app/widget/big_text.dart';
 import 'package:travel_app/widget/shadow_text_form.dart';
 
 class SignupScreen extends StatefulWidget {

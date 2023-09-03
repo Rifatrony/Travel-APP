@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:travel_app/controller/auth_controller.dart';
 import 'package:travel_app/screen/signup_screen.dart';
-import 'package:travel_app/utils/custom_message.dart';
 import 'package:travel_app/utils/diamention.dart';
 import 'package:travel_app/widget/app_button.dart';
-import 'package:travel_app/widget/app_text_form.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:travel_app/widget/shadow_text_form.dart';
 
@@ -19,9 +17,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  var phoneController = TextEditingController();
-  var passwordController = TextEditingController();
-
   final authController = Get.put(AuthController());
 
   @override
@@ -44,23 +39,60 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           ShadowTextForm(
             hint: "Phone",
-            controller: phoneController,
+            controller: authController.phoneController,
             inputType: TextInputType.phone,
           ),
           SizedBox(
             height: Diamentions.height16,
           ),
-          ShadowTextForm(
-            hint: "Password",
-            controller: passwordController,
-            inputType: TextInputType.text,
-            isVisible: true,
+          Obx( ()=>
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: Diamentions.width20),
+              child: Container(
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(22),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade400.withOpacity(0.5),
+                      spreadRadius: 0,
+                      blurRadius: 10,
+                      offset: const Offset(
+                          8, 5), // changes the position of the shadow
+                    ),
+                  ],
+                ),
+                child: TextFormField(
+                  obscureText: authController.isPasswordHidden.value,
+                  keyboardType: TextInputType.text,
+                  controller: authController.passwordController,
+                  style: const TextStyle(fontSize: 14),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    suffixIcon: InkWell(
+                              onTap: (){
+                                authController.isPasswordHidden.value =! authController.isPasswordHidden.value;
+                              },
+                              child: Icon(authController.isPasswordHidden.value ? Icons.visibility_off : Icons.visibility),
+                            ),
+                    contentPadding: EdgeInsets.only(
+                      left: Diamentions.width16,
+                      right: Diamentions.width16,
+                      top: Diamentions.height10,
+                      bottom: Diamentions.height10,
+                    ),
+                    hintText: "Password",
+                  ),
+                ),
+              ),
+            ),
           ),
           Obx(
             () => AppButton(
-              loading: authController.isLoaded.value,
+              loading: authController.isLoading.value,
               onPress: () {
-                userLogin();
+                authController.login();
               },
               title: "Login",
               height: 45,
@@ -92,23 +124,23 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void userLogin() {
-    String phone = phoneController.text.trim();
-    String password = passwordController.text.trim();
+  // void userLogin() {
+  //   String phone = phoneController.text.trim();
+  //   String password = passwordController.text.trim();
 
-    if (phone.isEmpty) {
-      Message.snackBar("Type in your number", title: "Phone Number");
-    } else if (password.isEmpty) {
-      Message.snackBar("Type in your Password", title: "Password");
-    } else if (password.length < 6) {
-      Message.snackBar("Password can not be less than 6 digit",
-          title: "Password");
-    } else {
-      Map data = {
-        "phone": phone,
-        "password": password,
-      };
-      authController.login(data);
-    }
-  }
+  //   if (phone.isEmpty) {
+  //     Message.snackBar("Type in your number", title: "Phone Number");
+  //   } else if (password.isEmpty) {
+  //     Message.snackBar("Type in your Password", title: "Password");
+  //   } else if (password.length < 6) {
+  //     Message.snackBar("Password can not be less than 6 digit",
+  //         title: "Password");
+  //   } else {
+  //     Map data = {
+  //       "phone": phone,
+  //       "password": password,
+  //     };
+  //     authController.login(data);
+  //   }
+  // }
 }

@@ -1,5 +1,8 @@
+// ignore_for_file: camel_case_types
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:travel_app/controller/auth_controller.dart';
 import 'package:travel_app/controller/cost_controller.dart';
 import 'package:travel_app/controller/member_controller.dart';
@@ -56,13 +59,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Map<String, double> dataMap = {
-    //   "Total Amount": memberController.calculateTotalBalance().toDouble(),
-    //   "Total Cost": costController.calculateTotalCost().toDouble(),
-    //   "Remaining Amount":
-    //       memberController.calculateRemainingBalance().toDouble(),
-    //   "Total Members": memberController.getTotalMembers().toDouble(),
-    // };
     return Scaffold(
       body: Column(
         children: [
@@ -92,7 +88,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     InkWell(
                       onTap: () {},
                       child: const CircleAvatar(
-                        radius: 24,
+                        radius: 34,
                         backgroundImage: AssetImage(
                           "assets/profile.jpg",
                         ),
@@ -125,26 +121,36 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                   ),
                                   GetBuilder<TourController>(
                                       builder: (controller) {
-                                    return TextButton.icon(
-                                      onPressed: () {
-                                        // controller.removeTourFromSP();
-                                        // Get.offAll(const TourScreen());
-                                        // Get.snackbar("Tour removed", "Add new tour");
-                                        Get.offAll(() => const TourScreen());
-                                      },
-                                      icon: const Icon(
-                                        Icons.edit,
-                                        color: Colors.white,
-                                      ),
-                                      label: Text(
-                                        widget.tourName,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
+                                    return Container(
+                                      height: 40,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Get.offAll(
+                                                () => const TourScreen());
+                                          },
+                                          child: Row(
+                                            children: [
+                                              Text(widget.tourName.toString(),
+                                                  style: GoogleFonts.lato(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                  )),
+                                              const SizedBox(
+                                                width: 12,
+                                              ),
+                                              const Icon(
+                                                Icons.edit,
+                                                color: Colors.white,
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     );
-                                  })
+                                  }),
                                 ],
                               );
                       },
@@ -156,9 +162,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           var token = authController.getAccessToken();
                           if (token != null) {
                             authController.removeUser();
-                            Get.offAll(()=> const LoginScreen());
-                          } else {
-                          }
+                            Get.offAll(() => const LoginScreen());
+                          } else {}
                         },
                         icon: const Icon(
                           Icons.logout,
@@ -199,51 +204,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           flex: 3,
                           child: Column(
                             children: [
-                              GetBuilder<MemberController>(
-                                builder: (controller) {
-                                  return BalanceContainer(
-                                    onPress: () {
-                                      Get.to(
-                                        MemberScreen(
-                                          id: widget.tourId,
-                                          tourName: widget.tourName,
-                                        ),
-                                      );
-                                    },
-                                    title: "Total Balance",
-                                    value:
-                                        "${controller.calculateTotalBalance()} (${controller.getTotalMembers()} person)",
-                                  );
-                                },
-                              ),
-                              GetBuilder<CostController>(
-                                builder: (controller) {
-                                  return BalanceContainer(
-                                    onPress: () {
-                                      Get.to(CostScreen(id: widget.tourId));
-                                    },
-                                    title: "Total Cost",
-                                    value: "${controller.calculateTotalCost()}",
-                                  );
-                                },
-                              ),
-                              GetBuilder<CostController>(
-                                builder: (costController) {
-                                  return GetBuilder<MemberController>(
-                                    builder: (memberController) {
-                                      return BalanceContainer(
-                                        onPress: () {
-                                          Get.to(CostScreen(id: widget.tourId));
-                                        },
-                                        title: "Average Cost",
-                                        value: costController
-                                            .calculateAverageCostPerMember()
-                                            .toStringAsFixed(2),
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
+                              totalBalance(),
+                              TotalCost(widget: widget),
+                              AverageCost(widget: widget),
                               GetBuilder<MemberController>(
                                 builder: (memberController) {
                                   return GetBuilder<CostController>(
@@ -365,22 +328,18 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             );
                           },
                         ),
-                        GetBuilder<MemberController>(
-                          builder: (memberController) {
-                            final totalMembers =
-                                memberController.getTotalMembers();
-                            final totalBalance =
-                                memberController.calculateTotalBalance();
-                            final averageBalance = totalMembers > 0
-                                ? totalBalance / totalMembers
-                                : 0;
 
-                            // Format the average balance to two decimal places
-                            final formattedAverageBalance =
-                                averageBalance.toStringAsFixed(2);
-                            return ReusableRow(
-                              title: "Per Person Cost",
-                              value: formattedAverageBalance,
+                        GetBuilder<CostController>(
+                          builder: (costController) {
+                            return GetBuilder<MemberController>(
+                              builder: (memberController) {
+                                return ReusableRow(
+                                  title: "Per person Cost",
+                                  value: costController
+                                      .calculateAverageCostPerMember()
+                                      .toStringAsFixed(2),
+                                );
+                              },
                             );
                           },
                         ),
@@ -423,9 +382,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       Diamentions.radius16,
                                     ),
                                   ),
-                                  child: Column(
+                                  child: const Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
+                                    children: [
                                       SmallText(
                                         text: "Cost",
                                       ),
@@ -456,9 +415,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     borderRadius: BorderRadius.circular(
                                         Diamentions.radius16),
                                   ),
-                                  child: Column(
+                                  child: const Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
+                                    children:  [
                                       SmallText(
                                         text: "Members",
                                       ),
@@ -581,6 +540,80 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  GetBuilder<MemberController> totalBalance() {
+    return GetBuilder<MemberController>(
+      builder: (controller) {
+        return BalanceContainer(
+          onPress: () {
+            Get.to(
+              MemberScreen(
+                id: widget.tourId,
+                tourName: widget.tourName,
+              ),
+            );
+          },
+          title: "Total Balance",
+          value:
+              "${controller.calculateTotalBalance()} (${controller.getTotalMembers()} person)",
+        );
+      },
+    );
+  }
+}
+
+class AverageCost extends StatelessWidget {
+  const AverageCost({
+    super.key,
+    required this.widget,
+  });
+
+  final DashBoardScreen widget;
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<CostController>(
+      builder: (costController) {
+        return GetBuilder<MemberController>(
+          builder: (memberController) {
+            return BalanceContainer(
+              onPress: () {
+                Get.to(CostScreen(id: widget.tourId));
+              },
+              title: "Average Cost",
+              value: costController
+                  .calculateAverageCostPerMember()
+                  .toStringAsFixed(2),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class TotalCost extends StatelessWidget {
+  const TotalCost({
+    super.key,
+    required this.widget,
+  });
+
+  final DashBoardScreen widget;
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<CostController>(
+      builder: (controller) {
+        return BalanceContainer(
+          onPress: () {
+            Get.to(CostScreen(id: widget.tourId));
+          },
+          title: "Total Cost",
+          value: "${controller.calculateTotalCost()}",
+        );
+      },
     );
   }
 }
