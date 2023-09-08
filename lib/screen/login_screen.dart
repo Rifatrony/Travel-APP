@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               onTap: (){
                                 authController.isPasswordHidden.value =! authController.isPasswordHidden.value;
                               },
-                              child: Icon(authController.isPasswordHidden.value ? Icons.visibility_off : Icons.visibility),
+                              child: Icon(authController.isPasswordHidden.value ? Icons.visibility : Icons.visibility_off),
                             ),
                     contentPadding: EdgeInsets.only(
                       left: Diamentions.width16,

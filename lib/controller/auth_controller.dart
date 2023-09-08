@@ -16,7 +16,7 @@ class AuthController extends GetxController implements GetxService {
 
   Future<void> login() async {
     if (phoneController.text.toString().isEmpty) {
-      Get.snackbar("Warning", "Email/ Phone is required");
+      Get.snackbar("Warning", "Phone is required");
     } else if (passwordController.text.toString().isEmpty) {
       Get.snackbar("Warning", "Password is required");
     } else if (passwordController.text.toString().length < 6) {
@@ -29,7 +29,18 @@ class AuthController extends GetxController implements GetxService {
           "password": passwordController.text.toString().trim(),
         };
         authRepo.login(data).then((value) {
-          if (value['message'] == "Login Successful") {
+          if (value['message'] == "Authentication Failed: Incorrect Phone number") {
+            Get.snackbar("Success", "Authentication Failed: Incorrect Phone number");
+            isLoading.value = false;
+            update();
+          }
+
+          else if (value['message'] == "Authentication Failed: Incorrect password.") {
+            Get.snackbar("Success", "Authentication Failed: Incorrect password.");
+            isLoading.value = false;
+            update();
+          }
+          else if (value['message'] == "Login Successful") {
             // Get.offAllNamed(RouteName.CUSTOMER_DASHBOARD_SCREEN);
             isLoading(false);
             isLoading.value = true;
@@ -39,28 +50,17 @@ class AuthController extends GetxController implements GetxService {
             update();
 
           } 
-          
-          else if (value['message'] == "Phone not found") {
-            Get.snackbar("Warning", "Phone number not found");
-            isLoading(false);
-            update();
-
-          } 
-          
-          else if (value['message'] ==
-              "Authentication Failed: Incorrect password.") {
-            Get.snackbar(
-                "Warning", "Authentication Failed: Incorrect password.");
-            isLoading(false);
-            update();
-          } else {
+          else {
             // Login error
             isLoading.value = false;
+            update();
           }
         });
       } catch (e) {
         // print e
         isLoading(false);
+        update();
+        print("Catch error ==============> $e");
       }
     }
 
